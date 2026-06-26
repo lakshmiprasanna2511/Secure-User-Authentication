@@ -3,7 +3,7 @@
  * Admin dashboard for user management
  */
 
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './Pages.css';
