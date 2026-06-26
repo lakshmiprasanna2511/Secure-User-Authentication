@@ -32,9 +32,8 @@ app.use(helmet());
  * Prevents unauthorized cross-origin requests
  */
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: 'https://secure-user-authentication-psi.vercel.app',
   credentials: true,
-  optionsSuccessStatus: 200,
 }));
 
 /**
