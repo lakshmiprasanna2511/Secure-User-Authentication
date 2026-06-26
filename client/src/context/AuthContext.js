@@ -5,7 +5,12 @@
 
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-
+const API = axios.create({
+  baseURL:
+    process.env.NODE_ENV === 'production'
+      ? 'https://secure-user-authentication-backend-tc1k.onrender.com'
+      : 'http://localhost:5000',
+});
 // Create authentication context
 export const AuthContext = createContext();
 
@@ -23,10 +28,10 @@ export const AuthProvider = ({ children }) => {
   // Set authorization header whenever token changes
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      API.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       localStorage.setItem('authToken', token);
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      delete API.defaults.headers.common['Authorization'];
       localStorage.removeItem('authToken');
     }
   }, [token]);
@@ -40,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const response = await axios.get('/api/auth/me');
+        const response = await API.get('/api/auth/me');
         if (response.data.success) {
           setUser(response.data.user);
           setError(null);
@@ -68,7 +73,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.post('/api/auth/register', userData);
+      const response = await API.post('/api/auth/register', userData);
 
       if (response.data.success) {
         setToken(response.data.token);
@@ -94,7 +99,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.post('/api/auth/login', credentials);
+      const response = await API.post('/api/auth/login', credentials);
 
       if (response.data.success) {
         setToken(response.data.token);
@@ -115,7 +120,7 @@ export const AuthProvider = ({ children }) => {
    */
   const logout = async () => {
     try {
-      await axios.post('/api/auth/logout');
+      await API.post('/api/auth/logout');
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
@@ -133,7 +138,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (updates) => {
     try {
       setLoading(true);
-      const response = await axios.put('/api/users/profile', updates);
+      const response = await API.put('/api/users/profile', updates);
 
       if (response.data.success) {
         setUser(response.data.user);
@@ -156,7 +161,7 @@ export const AuthProvider = ({ children }) => {
   const changePassword = async (passwordData) => {
     try {
       setLoading(true);
-      const response = await axios.put('/api/users/change-password', passwordData);
+      const response = await API.put('/api/users/change-password', passwordData);
 
       if (response.data.success) {
         return { success: true };
